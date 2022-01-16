@@ -1,8 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { colors } from "../../constants/colors";
 import { Iconly } from "../Iconly";
 import { useStyles } from "./hooks/useStyles";
-import { motion, AnimatePresence } from "framer-motion";
 interface IDropdownProps {
   items: Array<string>;
   icon?: string | { icon: string; size: "md" | "lg" | "sm" };
@@ -19,23 +18,41 @@ export const Dropdown: React.FC<IDropdownProps> = ({
   renderItem,
   onSelect,
 }) => {
+  const key = useRef<string>(Math.random().toString().split(".")[1]);
   const styles = useStyles();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedText, setSelectedText] = useState<string>(text ? text : "");
-
+  const detectClick = useCallback(
+    (e: any) => {
+      console.log(e);
+      if (!e.target.closest("#ref" + key.current)) setIsOpen(false);
+    },
+    [isOpen]
+  );
   const selectItem = useCallback((item: string, index: number) => {
     setIsOpen(() => false);
     onSelect && onSelect(item, index);
     setSelectedText(() => (text ? item : ""));
   }, []);
+
+  useEffect(() => {
+    document.addEventListener("click", detectClick);
+    return () => {
+      document.removeEventListener("click", detectClick);
+    };
+  }, []);
+
   return (
     <div
       className={styles.wrapper}
-      style={{ minWidth: bordered ? 200 : "fit-content" }}
+      style={{
+        width: bordered ? 200 : "fit-content",
+      }}
     >
       <div
         className={`${styles.container} ${!bordered && styles.unBordered}`}
         onClick={() => setIsOpen(() => !isOpen)}
+        id={"ref" + key.current}
         style={
           bordered
             ? {
@@ -56,39 +73,27 @@ export const Dropdown: React.FC<IDropdownProps> = ({
           />
         )}
       </div>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{
-              transform: `translateY(30px)`,
-              opacity: 0,
-            }}
-            animate={{
-              transform: `translateY(0px)`,
-              opacity: 1,
-            }}
-            className={styles.list}
-          >
-            {items.map((item, index) =>
-              renderItem ? (
-                <div
-                  onClick={() => selectItem(item, index)}
-                  className={styles.listItem}
-                >
-                  <span>{renderItem(item, index)}</span>
-                </div>
-              ) : (
-                <div
-                  onClick={() => selectItem(item, index)}
-                  className={styles.listItem}
-                >
-                  <span>{item}</span>
-                </div>
-              )
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div className={styles.list}>
+          {items.map((item, index) =>
+            renderItem ? (
+              <div
+                onClick={() => selectItem(item, index)}
+                className={styles.listItem}
+              >
+                <span>{renderItem(item, index)}</span>
+              </div>
+            ) : (
+              <div
+                onClick={() => selectItem(item, index)}
+                className={styles.listItem}
+              >
+                <span>{item}</span>
+              </div>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 };

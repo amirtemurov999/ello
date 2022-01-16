@@ -74,16 +74,6 @@ export const Home = () => {
               title="Completed"
               tasks={{}}
               onNewClick={() => setShowNewTaskDialog(true)}
-            />{" "}
-            <Canban
-              title="Completed"
-              tasks={{}}
-              onNewClick={() => setShowNewTaskDialog(true)}
-            />{" "}
-            <Canban
-              title="Completed"
-              tasks={{}}
-              onNewClick={() => setShowNewTaskDialog(true)}
             />
           </div>
         </div>

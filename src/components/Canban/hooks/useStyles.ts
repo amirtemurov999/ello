@@ -6,7 +6,7 @@ export const useStyles = makeStyles((theme) =>
     wrapper: {
       display: "flex",
       flexDirection: "column",
-      minWidth: 350,
+      width: 350,
       marginRight: 30,
       padding: 2,
     },

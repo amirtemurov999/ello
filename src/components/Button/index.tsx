@@ -2,7 +2,7 @@ import { useStyles } from "./hooks/useStyles";
 import { Iconly } from "../Iconly";
 import { colors } from "../../constants/colors";
 import { createStyles, makeStyles } from "@mui/styles";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Preloader } from "../Preloader";
 export interface IButtonProps {
   text: string;
@@ -14,6 +14,8 @@ export interface IButtonProps {
   danger?: boolean;
   disabled?: boolean;
   onClick: () => {} | void;
+  style?: React.CSSProperties;
+  borderless?: boolean;
 }
 
 export const Button: React.FC<IButtonProps> = ({
@@ -25,22 +27,24 @@ export const Button: React.FC<IButtonProps> = ({
   outline,
   danger,
   disabled,
+  style,
   onClick,
+  borderless = false,
 }) => {
   const [hover, setHover] = useState<boolean>(false);
   const styles = useStyles();
   const innerStyles = makeStyles((theme) =>
     createStyles({
       button: {
-        backgroundColor: outline ? "transparent" : colors.darkGreen,
-        color: !outline ? "white" : colors.darkGreen,
+        backgroundColor:
+          outline || borderless ? "transparent" : colors.darkGreen,
+        color: outline || borderless ? colors.darkGreen : "white",
         width: full ? "auto" : "fit-content",
 
         boxShadow: outline ? "0 0 0 1px " + colors.darkGreen : "none",
         "&:hover": {
-          backgroundColor: outline
-            ? "transparent"
-            : colors.hover.darkGreenHover,
+          backgroundColor:
+            outline || borderless ? "transparent" : colors.hover.darkGreenHover,
         },
       },
     })
@@ -50,6 +54,7 @@ export const Button: React.FC<IButtonProps> = ({
     <div
       className={`${styles.wrapper} ${innerStyles.button}`}
       onClick={onClick}
+      style={style}
     >
       <Preloader
         color={outline ? colors.darkGreen : "white"}
@@ -57,7 +62,10 @@ export const Button: React.FC<IButtonProps> = ({
         animate={loading || false}
       />
       {leftIcon && (
-        <Iconly name={leftIcon} color={outline ? colors.darkGreen : "white"} />
+        <Iconly
+          name={leftIcon}
+          color={outline || borderless ? colors.darkGreen : "white"}
+        />
       )}
       <span
         style={{ marginLeft: leftIcon ? 5 : 0, marginRight: rightIcon ? 5 : 0 }}
@@ -65,7 +73,10 @@ export const Button: React.FC<IButtonProps> = ({
         {text}
       </span>
       {rightIcon && (
-        <Iconly name={rightIcon} color={outline ? colors.darkGreen : "white"} />
+        <Iconly
+          name={rightIcon}
+          color={outline || borderless ? colors.darkGreen : "white"}
+        />
       )}
     </div>
   );

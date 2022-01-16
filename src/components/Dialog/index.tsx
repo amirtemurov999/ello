@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useStyles } from "./hooks/useStyles";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, IButtonProps } from "../Button";
@@ -14,12 +14,20 @@ export const Dialog: React.FC<IDialogProps> = ({
   title,
   show = false,
   closable,
-  onClose,
   style,
+  onClose,
   buttons,
   ...props
 }) => {
   const styles = useStyles();
+  const detectClick = useCallback((e: KeyboardEvent) => {
+    console.log(e.keyCode);
+    if (e.keyCode == 27) onClose && onClose();
+  }, []);
+  useEffect(() => {
+    if (show) document.addEventListener("keydown", detectClick);
+    else document.removeEventListener("keydown", detectClick);
+  }, [show]);
   return (
     <AnimatePresence>
       {show && (
@@ -28,7 +36,6 @@ export const Dialog: React.FC<IDialogProps> = ({
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
           className={styles.wrapper}
-          onClick={onClose}
           exit={{ opacity: 0 }}
         >
           <motion.div
@@ -38,7 +45,6 @@ export const Dialog: React.FC<IDialogProps> = ({
             className={styles.form}
             style={style}
             exit={{ scale: 1.2 }}
-            onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.titleBar}>{title}</div>
             <div className={styles.content}>{props.children}</div>
