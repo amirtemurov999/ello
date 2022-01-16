@@ -5,6 +5,7 @@ export const useStyles = makeStyles((theme) =>
   createStyles({
     wrapper: {
       position: "relative",
+      userSelect: "none",
     },
     container: {
       display: "flex",
@@ -22,7 +23,9 @@ export const useStyles = makeStyles((theme) =>
     list: {
       marginTop: 5,
       boxSizing: "border-box",
+      background: "white",
       position: "absolute",
+      zIndex: 500,
       minWidth: 150,
       borderRadius: 6,
       padding: 10,

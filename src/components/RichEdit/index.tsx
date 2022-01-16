@@ -7,6 +7,14 @@ interface IRichProps {}
 export const RichEdit: React.FC<IRichProps> = ({}) => {
   const styles = useStyles();
   const editor = useRef<HTMLDivElement>(null);
+  const colors = useRef<{ [key: string]: string }>({
+    Red: "red",
+    Green: "green",
+    Back: "black",
+    Blue: "blue",
+    White: "white",
+    Silver: "silver",
+  });
   const [states, setStates] = useState<{ [key: string]: boolean }>({
     bold: false,
     underline: false,
@@ -14,14 +22,29 @@ export const RichEdit: React.FC<IRichProps> = ({}) => {
     backColor: false,
     italic: false,
     strikeThrough: false,
+    insertOrderedList: false,
+    insertUnorderedList: false,
+    code: false,
   });
-  const executeCommand = useCallback((command: string) => {
-    document.execCommand(command, false, "ads");
-    detectStyles();
-  }, []);
-  const insertHeading = useCallback(() => {
-    
-  },[])
+  const executeCommand = useCallback(
+    (command: string, tag: string = "", color = "") => {
+      if (tag) {
+        if (window.getSelection()?.rangeCount != 0)
+          document.execCommand(
+            command,
+            false,
+            `<${tag}>${window.getSelection()}</${tag}>`
+          );
+      } else if (color) {
+        document.execCommand(command, false, color);
+      } else {
+        document.execCommand(command, false);
+        detectStyles();
+      }
+    },
+    []
+  );
+  const insertHeading = useCallback(() => {}, []);
   const detectStyles = useCallback(() => {
     Object.keys(states).map((key) => {
       states[key] = document.queryCommandState(key);
@@ -34,8 +57,40 @@ export const RichEdit: React.FC<IRichProps> = ({}) => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.toolbar}>
-        <RichButton iconName="TextColor" />
-
+        <Dropdown
+          items={Object.keys(colors.current)}
+          bordered={false}
+          icon={{ icon: "TextColor", size: "sm" }}
+          renderItem={(text, index) => (
+            <div
+              style={{ display: "flex", alignItems: "center" }}
+              onClick={() =>
+                executeCommand("foreColor", "", colors.current[text])
+              }
+            >
+              <div
+                style={{
+                  background: colors.current[text],
+                  width: 18,
+                  height: 18,
+                  marginRight: 5,
+                  border: `1px solid black`,
+                }}
+              ></div>
+              <span>{text}</span>
+            </div>
+          )}
+        />
+        <RichButton
+          iconName="DecFont"
+          command="decreaseFontSize"
+          onClick={(command) => executeCommand(command)}
+        />
+        <RichButton
+          iconName="IncFont"
+          command="increaseFontSize"
+          onClick={(command) => executeCommand(command)}
+        />
         <div className={styles.splitter} />
 
         <RichButton
@@ -74,15 +129,56 @@ export const RichEdit: React.FC<IRichProps> = ({}) => {
           ]}
           bordered={false}
           icon={{ icon: "Heading", size: "sm" }}
-          renderItem={()}
+          renderItem={(text, index) => (
+            <span onClick={() => executeCommand("insertHTML", `H${index + 1}`)}>
+              {text}
+            </span>
+          )}
         />
         <div className={styles.splitter} />
-        <RichButton iconName="Ordered" />
-        <RichButton iconName="Unordered" />
+        <RichButton
+          iconName="Ordered"
+          command="insertOrderedList"
+          toggle={states["insertOrderedList"]}
+          onClick={(command) => executeCommand(command)}
+        />
+        <RichButton
+          iconName="Unordered"
+          command="insertUnorderedList"
+          toggle={states["insertUnorderedList"]}
+          onClick={(command) => executeCommand(command)}
+        />
         <RichButton iconName="Quote" />
         <div className={styles.splitter} />
-        <RichButton iconName="Code" />
-        <RichButton iconName="Marker" />
+        <RichButton
+          iconName="Code"
+          command="insertHTML"
+          onClick={(command) => executeCommand(command, "code")}
+        />
+        <Dropdown
+          items={Object.keys(colors.current)}
+          bordered={false}
+          icon={{ icon: "Marker", size: "sm" }}
+          renderItem={(text, index) => (
+            <div
+              style={{ display: "flex", alignItems: "center" }}
+              onClick={() =>
+                executeCommand("backColor", "", colors.current[text])
+              }
+            >
+              <div
+                style={{
+                  background: colors.current[text],
+                  width: 18,
+                  height: 18,
+                  marginRight: 5,
+                  border: `1px solid black`,
+                }}
+              ></div>
+              <span>{text}</span>
+            </div>
+          )}
+        />
         <RichButton iconName="Link2" />
         <RichButton iconName="Unlink" />
         <RichButton iconName="FullScreen" />
@@ -92,6 +188,12 @@ export const RichEdit: React.FC<IRichProps> = ({}) => {
         contentEditable="true"
         ref={editor}
         className={styles.editor}
+        onKeyUp={(e) => {
+          console.log(e.keyCode);
+          if ([37, 37, 39, 40].includes(e.keyCode)) {
+            detectStyles();
+          }
+        }}
       >
         asdawdawdawd
       </div>

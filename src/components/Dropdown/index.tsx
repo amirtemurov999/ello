@@ -7,7 +7,7 @@ interface IDropdownProps {
   items: Array<string>;
   icon?: string | { icon: string; size: "md" | "lg" | "sm" };
   text?: string;
-  renderItem?: (text: string) => {};
+  renderItem?: (text: string, index: number) => {};
   onSelect?: (text: string, id: number) => {};
   bordered?: boolean;
 }
@@ -75,7 +75,7 @@ export const Dropdown: React.FC<IDropdownProps> = ({
                   onClick={() => selectItem(item, index)}
                   className={styles.listItem}
                 >
-                  <span>{renderItem(item)}</span>
+                  <span>{renderItem(item, index)}</span>
                 </div>
               ) : (
                 <div
