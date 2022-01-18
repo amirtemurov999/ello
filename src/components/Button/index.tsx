@@ -59,7 +59,7 @@ export const Button: React.FC<IButtonProps> = ({
       <Preloader
         color={outline ? colors.darkGreen : "white"}
         style={{ position: "absolute", left: 20 }}
-        animate={loading || false}
+        show={loading || false}
       />
       {leftIcon && (
         <Iconly

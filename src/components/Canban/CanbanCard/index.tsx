@@ -84,7 +84,7 @@ export const CanbanCard: React.FC<ICanbanCardProps> = ({ task }) => {
             />
           </svg>
         </div>
-        <div style={{ margin: "15px 0" }}>{task.title}</div>
+        <div style={{ margin: "15px 0" }}>{task.content}</div>
         <div className={styles.footer}>
           <Badge text={task.deadline} priority={task.priority} icon="Clock" />
           <img

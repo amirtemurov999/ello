@@ -28,29 +28,18 @@ export const Canban: React.FC<ICanbanProps> = ({
       onDragEnter={() => setMessage(() => "Me!")}
       onDragLeave={() => setMessage(() => "")}
       onDragOver={(e) => e.preventDefault()}
-      onDragEnd={() =>
-        setTaskCollection(() => {
-          return {
-            ...taskCollection,
-            ...{
-              ["a" + Math.round(Math.random() * 100)]: {
-                ...taskCollection["a"],
-              },
-            },
-          };
-        })
-      }
     >
       <div className={styles.titleBar}>
         <span>{title + message}</span>
         <div className={styles.counter}>
-          <span>{tasks.length}</span>
+          <span>{tasks ? Object.keys(tasks).length : 0}</span>
         </div>
       </div>
       <div className={styles.cardsWrapper}>
-        {Object.keys(taskCollection).map((task) => {
-          return <CanbanCard task={taskCollection[task]} />;
-        })}
+        {taskCollection &&
+          Object.keys(taskCollection).map((task) => {
+            return <CanbanCard task={taskCollection[task]} />;
+          })}
       </div>
       <Button outline text="" leftIcon="Plus" onClick={onNewClick} full />
     </div>

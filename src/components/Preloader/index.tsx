@@ -4,15 +4,15 @@ import { useStyles } from "./hooks/useStyles";
 interface IPreloaderProps {
   color: string;
   style?: React.CSSProperties;
-  animate: boolean;
+  show: boolean;
 }
 export const Preloader: React.FC<IPreloaderProps> = ({
   color,
   style,
-  animate = false,
+  show = false,
 }) => {
   const styles = useStyles();
-  return animate ? (
+  return show ? (
     <div className={styles.wrapper} style={style}>
       <Iconly name="Loader" color={color} />
     </div>

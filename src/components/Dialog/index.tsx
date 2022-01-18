@@ -48,11 +48,13 @@ export const Dialog: React.FC<IDialogProps> = ({
           >
             <div className={styles.titleBar}>{title}</div>
             <div className={styles.content}>{props.children}</div>
-            <div style={{ float: "right", display: "flex" }}>
-              {buttons?.map((button) => {
-                return <Button {...button} />;
-              })}
-            </div>
+            {buttons && (
+              <div style={{ float: "right", display: "flex", marginTop: 25 }}>
+                {buttons?.map((button) => {
+                  return <Button {...button} />;
+                })}
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

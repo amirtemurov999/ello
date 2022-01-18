@@ -5,12 +5,13 @@ import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from "react-google-login";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { connect, ConnectedProps } from "react-redux";
 import { actions as authActions } from "../../store/reducers/authReducer";
 import { IAppreducers } from "../../store/rootReducer";
 import { useCallback, useEffect, useState } from "react";
 import { CLIENT_ID } from "../../constants";
+import { fetchTasks } from "../../cruds/tasksCrud";
 const Login: React.FC<TPropsFromRedux> = ({
   loadingState,
   googleLoadingState,
@@ -19,8 +20,9 @@ const Login: React.FC<TPropsFromRedux> = ({
   loginWithGoogle,
 }) => {
   const styles = useStyles();
+  const history = useHistory();
   const [email, setEmail] = useState<string>("htecgf@gmail.com");
-  const [password, setPassword] = useState<string>("197414");
+  const [password, setPassword] = useState<string>("197414@ello");
   const loginIntoSystem = useCallback(() => {
     login({ email: email, password: password });
   }, [email, password]);
@@ -37,6 +39,11 @@ const Login: React.FC<TPropsFromRedux> = ({
     },
     []
   );
+  useEffect(() => {
+    if (loadingState.success) {
+      history.push("/home");
+    }
+  }, [loadingState, googleLoadingState]);
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -79,7 +86,7 @@ const Login: React.FC<TPropsFromRedux> = ({
             full
             loading={loadingState.loading}
             text="Login"
-            onClick={loginIntoSystem}
+            onClick={() => loginIntoSystem()}
           />
         </section>
         <section className={styles.section} style={{ textAlign: "center" }}>

@@ -18,6 +18,14 @@ export const Sidebar = () => {
         style={{ width: 500 }}
         buttons={[
           {
+            text: "Cancel",
+            style: { marginRight: 10 },
+            outline: true,
+            onClick: () => {
+              setVisibleDialog(false);
+            },
+          },
+          {
             text: "Create project",
             onClick: () => {
               console.log("Salom");
